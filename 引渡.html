@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>引渡し完了報告書</title>
+    <!-- Tailwind CSSを読み込み -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* iOSでの入力拡大を防止 */
+        input[type="text"], input[type="number"], textarea {
+            font-size: 16px;
+        }
+        /* 署名パッドのカーソルスタイル */
+        .signature-pad {
+            cursor: crosshair;
+            touch-action: none; /* スマホでのスクロールを無効化 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-2 sm:p-4">
+    <div class="max-w-4xl mx-auto bg-white p-4 sm:p-6 rounded-lg shadow-lg">
+        <!-- #1: タイトル -->
+        <h1 class="text-2xl sm:text-3xl font-bold text-center mb-4">引渡し完了報告書</h1>
+
+        <!-- #2, #3: 会社情報 -->
+        <div class="text-right text-sm sm:text-base">
+            <p>東レエンジニアリングDソリューションズ株式会社</p>
+            <p>システム技術本部　ソリューション技術本部</p>
+            <div class="flex justify-end items-center mt-1">
+                <label for="agent-name">（代行者：B＆Mテクノサービス／</label>
+                <input type="text" id="agent-name" class="border rounded px-1 w-24">
+                <span>）</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-4">
+            <!-- 左側カラム -->
+            <div>
+                <!-- #4, #5, #6, #7: 御納入先 -->
+                <h2 class="font-bold text-lg border-b-2 border-gray-300 pb-1 mb-2">【御納入先】</h2>
+                <div class="space-y-2 text-sm sm:text-base">
+                    <p>社名：株式会社マルハン</p>
+                    <div class="flex items-center">
+                        <label for="store-name" class="w-20">店舗名：</label>
+                        <input type="text" id="store-name" class="border rounded px-2 py-1 w-full">
+                    </div>
+                    <div class="flex items-center">
+                        <label for="contact-name" class="w-20">ご担当：</label>
+                        <input type="text" id="contact-name" class="border rounded px-2 py-1 w-full">
+                    </div>
+                </div>
+
+                <!-- #9, #10, #11, #12: 御契約先 -->
+                <h2 class="font-bold text-lg border-b-2 border-gray-300 pb-1 mb-2 mt-4">【御契約先】</h2>
+                <div class="space-y-2 text-sm sm:text-base">
+                    <p>社名：株式会社マルハン</p>
+                    <div class="flex items-center">
+                        <label for="order-number" class="w-24">ご注文番号：</label>
+                        <input type="text" id="order-number" class="border rounded px-2 py-1 w-full">
+                    </div>
+                    <div class="flex items-center flex-wrap">
+                        <label for="product-name" class="whitespace-nowrap">品名：PHC</label>
+                        <input type="text" id="product-name" placeholder="店舗" class="border rounded px-2 py-1 mx-1 w-20">
+                        <span>店 HC-BOX取付工事</span>
+                        <span class="ml-auto mt-1 sm:mt-0">数量：一式</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側カラム: #8 署名欄 -->
+            <div class="mt-4 md:mt-0">
+                 <h2 class="font-bold text-lg border-b-2 border-gray-300 pb-1 mb-2">ご署名</h2>
+                 <div class="relative">
+                    <canvas id="signature-canvas" class="border-2 border-gray-300 rounded-lg w-full h-48 signature-pad"></canvas>
+                    <button id="clear-signature" class="absolute top-2 right-2 bg-gray-500 text-white px-2 py-1 rounded text-xs">クリア</button>
+                 </div>
+            </div>
+        </div>
+
+        <!-- #13: 案内文 -->
+        <p class="mt-6 text-sm sm:text-base">上記の案件に関しまして下記の条件にて作業を完了しましたのでお引渡しいたします。</p>
+
+        <!-- #14 ~ #26: 作業内容詳細 -->
+        <div class="mt-4 space-y-3 text-sm sm:text-base">
+            <!-- HC-BOX取り付け -->
+            <div class="bg-gray-50 p-3 rounded-md border">
+                <div class="flex items-center">
+                    <input type="checkbox" id="hc-install" class="h-5 w-5 mr-2">
+                    <label for="hc-install" class="font-semibold">HC-BOX取り付け（新設・仮新設）</label>
+                </div>
+                <div class="mt-2 pl-7">
+                    <textarea class="border rounded w-full p-2 h-20" placeholder="新設・仮新設の台数、台番などを入力してください"></textarea>
+                </div>
+            </div>
+            
+            <!-- 残置 -->
+            <div class="bg-gray-50 p-3 rounded-md border">
+                 <div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="leftover" class="h-5 w-5 mr-2">
+                        <label for="leftover" class="font-semibold">残置（スマート機→ノーマル機）</label>
+                    </div>
+                    <div class="mt-2 pl-7">
+                        <textarea class="border rounded w-full p-2 h-20" placeholder="台数、台番などを入力してください"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- e機/L機 -->
+            <div class="bg-gray-50 p-3 rounded-md border grid grid-cols-1 lg:grid-cols-2 gap-4">
+                 <div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="e-to-p" class="h-5 w-5 mr-2">
+                        <label for="e-to-p" class="font-semibold">e機→P機</label>
+                    </div>
+                    <textarea class="mt-2 border rounded w-full p-2 h-20" placeholder="台数、台番などを入力"></textarea>
+                </div>
+                <div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="l-to-s" class="h-5 w-5 mr-2">
+                        <label for="l-to-s" class="font-semibold">L機→S機</label>
+                    </div>
+                    <textarea class="mt-2 border rounded w-full p-2 h-20" placeholder="台数、台番などを入力"></textarea>
+                </div>
+            </div>
+            
+            <!-- 残置戻し -->
+            <div class="bg-gray-50 p-3 rounded-md border">
+                 <div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="leftover-return" class="h-5 w-5 mr-2">
+                        <label for="leftover-return" class="font-semibold">残置戻し（ノーマル機→スマート機）</label>
+                    </div>
+                    <div class="mt-2 pl-7">
+                         <textarea class="border rounded w-full p-2 h-20" placeholder="台数、台番などを入力してください"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 移設 -->
+            <div class="bg-gray-50 p-3 rounded-md border">
+                <div class="flex items-center">
+                    <input type="checkbox" id="relocate" class="h-5 w-5 mr-2">
+                    <label for="relocate" class="font-semibold">移設（HC-BOX移設）</label>
+                </div>
+                 <div class="mt-2 pl-7">
+                    <textarea class="border rounded w-full p-2 h-20" placeholder="撤去元、移設先の台数、台番などを入力してください"></textarea>
+                </div>
+            </div>
+            
+            <!-- 変換 -->
+            <div class="bg-gray-50 p-3 rounded-md border">
+                <div class="flex items-center mb-2">
+                    <input type="checkbox" id="convert" class="h-5 w-5 mr-2">
+                    <label for="convert" class="font-semibold">変換（Ｐ→ＳまたはＳ→Ｐ）</label>
+                </div>
+                <div class="pl-7 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                     <div>
+                         <div class="flex items-center">
+                            <input type="checkbox" id="l-to-e" class="h-5 w-5 mr-2">
+                            <label for="l-to-e" class="font-semibold">L機(S)→e機(P)</label>
+                        </div>
+                        <textarea class="mt-2 border rounded w-full p-2 h-20" placeholder="台数、台番などを入力"></textarea>
+                    </div>
+                    <div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="e-to-l" class="h-5 w-5 mr-2">
+                            <label for="e-to-l" class="font-semibold">e機(P)→L機(S)</label>
+                        </div>
+                         <textarea class="mt-2 border rounded w-full p-2 h-20" placeholder="台数、台番などを入力"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 連絡欄・写真撮影 -->
+            <div class="space-y-2">
+                <div>
+                    <label for="notes" class="font-semibold">連絡欄：</label>
+                    <textarea id="notes" class="border rounded w-full mt-1 p-2 h-24"></textarea>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="photo-permission" class="h-5 w-5 mr-2">
+                    <label for="photo-permission">写真撮影あり（店舗様より写真撮影許可済み）</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- #27, #28: フッター情報 -->
+        <div class="flex justify-between items-center mt-8 pt-4 border-t-2">
+            <div class="flex items-center">
+                <label for="production-number">製作番号：</label>
+                <input type="text" id="production-number" class="border rounded w-24 sm:w-32 px-2 py-1 ml-2">
+            </div>
+            <div class="flex items-center">
+                <label for="store-code">店舗コード：</label>
+                <input type="text" id="store-code" class="border rounded w-24 sm:w-32 px-2 py-1 ml-2">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 署名パッドのスクリプト ---
+        const canvas = document.getElementById('signature-canvas');
+        const clearButton = document.getElementById('clear-signature');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // 解像度に合わせてcanvasのサイズを調整
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext('2d').scale(ratio, ratio);
+        }
+
+        // 初期化とリサイズイベント
+        window.addEventListener('load', resizeCanvas);
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 描画開始
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = getCoords(e);
+        }
+
+        // 描画中
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault(); // スクロール防止
+            const [x, y] = getCoords(e);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+            [lastX, lastY] = [x, y];
+        }
+
+        // 描画終了
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        // 座標を取得（マウスとタッチイベントに対応）
+        function getCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            let eventX, eventY;
+            if (e.touches && e.touches.length > 0) {
+                eventX = e.touches[0].clientX;
+                eventY = e.touches[0].clientY;
+            } else {
+                eventX = e.clientX;
+                eventY = e.clientY;
+            }
+            return [eventX - rect.left, eventY - rect.top];
+        }
+
+        // イベントリスナーを設定
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // クリアボタンの処理
+        clearButton.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+    </script>
+</body>
+</html>
+
+
+
